@@ -1,21 +1,34 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { logoutUser } from 'api';
 
 const authSlice = createSlice({
   name: 'auth',
-  initialState: { user: null, token: null },
+  initialState: { isAuthenticated: false, user: null },
   reducers: {
-    setAuthenticatedUser(state, action) {
-      const { user, token } = action.payload;
-      state.user = user;
-      state.token = token;
+    loginSuccess(state, action) {
+      state.isAuthenticated = true;
+      state.user = action.payload;
     },
-    clearAuthenticatedUser(state) {
+    logoutSuccess(state) {
+      state.isAuthenticated = false;
       state.user = null;
-      state.token = null;
     },
   },
 });
 
-export const { setAuthenticatedUser, clearAuthenticatedUser } =
-  authSlice.actions;
-export default authSlice.reducer;
+export const { loginSuccess, logoutSuccess } = authSlice.actions;
+export const authReducer = authSlice.reducer;
+
+export const clearUserData = () => dispatch => {
+  dispatch(logoutSuccess());
+};
+
+export const logoutUserAsync = () => async dispatch => {
+  try {
+    await logoutUser();
+
+    dispatch(logoutSuccess());
+  } catch (error) {
+    console.error('Error logging out user:', error);
+  }
+};

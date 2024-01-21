@@ -1,22 +1,45 @@
-import { useState } from 'react';
-import { registerUser } from '../api';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { registerUser } from 'api';
 
-export const Register = () => {
+const Register = () => {
   const dispatch = useDispatch();
+  const [name, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    dispatch(registerUser(email, password));
+
+    try {
+      const userData = {
+        name,
+        email,
+        password,
+      };
+
+      const registrationResult = await registerUser(userData, dispatch);
+
+      if (registrationResult.success) {
+        console.log('Registration successful:', registrationResult.message);
+      } else {
+        console.error('Registration failed:', registrationResult.error);
+      }
+    } catch (error) {
+      console.error('Error during registration:', error);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <label>
         Username
-        <input type="text" name="username"></input>
+        <input
+          type="text"
+          name="name"
+          value={name}
+          onChange={e => setUsername(e.target.value)}
+        />
       </label>
 
       <label>
@@ -26,7 +49,7 @@ export const Register = () => {
           name="email"
           value={email}
           onChange={e => setEmail(e.target.value)}
-        ></input>
+        />
       </label>
 
       <label>
@@ -36,11 +59,12 @@ export const Register = () => {
           name="password"
           value={password}
           onChange={e => setPassword(e.target.value)}
-        ></input>
+        />
       </label>
 
       <button type="submit">Create account</button>
     </form>
   );
 };
+
 export default Register;

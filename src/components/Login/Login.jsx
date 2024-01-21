@@ -1,15 +1,40 @@
-import { useState } from 'react';
-import { loginUser } from '../api';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { loginUser } from 'api';
+import { useNavigate } from 'react-router-dom';
 
-export const Login = () => {
+const Login = () => {
   const dispatch = useDispatch();
-  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    dispatch(loginUser(email, password));
+
+    try {
+      const userData = {
+        email: email,
+        password: password,
+      };
+
+      const loginResult = await loginUser(userData, dispatch);
+
+      if (loginResult.success) {
+        console.log('Login successful:', loginResult.message);
+
+        navigate('/contacts');
+      } else {
+        console.error('Login failed:', loginResult.error);
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+
+      if (error.message) {
+        console.error('Error message:', error.message);
+      }
+    }
   };
 
   return (
@@ -21,7 +46,7 @@ export const Login = () => {
           name="email"
           value={email}
           onChange={e => setEmail(e.target.value)}
-        ></input>
+        />
       </label>
 
       <label>
@@ -31,11 +56,12 @@ export const Login = () => {
           name="password"
           value={password}
           onChange={e => setPassword(e.target.value)}
-        ></input>
+        />
       </label>
 
       <button type="submit">Login</button>
     </form>
   );
 };
+
 export default Login;

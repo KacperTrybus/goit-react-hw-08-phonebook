@@ -1,54 +1,26 @@
-// import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-// import * as api from '../api';
+import { createSlice } from '@reduxjs/toolkit';
 
-// export const fetchContactsAsync = createAsyncThunk(
-//   'contacts/fetchContacts',
-//   async () => {
-//     return await api.fetchContacts();
-//   }
-// );
+const contactsSlice = createSlice({
+  name: 'contacts',
+  initialState: { contacts: [] },
+  reducers: {
+    addContactSuccess(state, action) {
+      state.contacts.push(action.payload);
+    },
+    addContact(state, action) {
+      state.contacts.push(action.payload);
+    },
+    deleteContact(state, action) {
+      state.contacts = state.contacts.filter(
+        contact => contact.id !== action.payload
+      );
+    },
+    setContacts(state, action) {
+      state.contacts = action.payload;
+    },
+  },
+});
 
-// export const addContactAsync = createAsyncThunk(
-//   'contacts/addContact',
-//   async contact => {
-//     return await api.addContact(contact);
-//   }
-// );
-
-// export const deleteContactAsync = createAsyncThunk(
-//   'contacts/deleteContact',
-//   async id => {
-//     return await api.deleteContact(id);
-//   }
-// );
-
-// export const initialState = {
-//   contacts: [],
-//   status: 'idle',
-//   error: null,
-// };
-
-// const contactsSlice = createSlice({
-//   name: 'contacts',
-//   initialState: initialState,
-
-//   extraReducers: builder => {
-//     builder
-//       .addCase(fetchContactsAsync.fulfilled, (state, action) => {
-//         state.status = 'succeeded';
-//         state.contacts = action.payload;
-//       })
-//       .addCase(addContactAsync.fulfilled, (state, action) => {
-//         state.contacts.push(action.payload);
-//       })
-//       .addCase(deleteContactAsync.fulfilled, (state, action) => {
-//         const idToDelete = action.payload.id;
-//         state.contacts = state.contacts.filter(
-//           contact => contact.id !== idToDelete
-//         );
-//       });
-//   },
-// });
-
-// export const { addContact, deleteContact } = contactsSlice.actions;
-// export const contactsReducer = contactsSlice.reducer;
+export const { addContact, deleteContact, setContacts, addContactSuccess } =
+  contactsSlice.actions;
+export const contactsReducer = contactsSlice.reducer;

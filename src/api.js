@@ -1,131 +1,183 @@
-import axios from 'axios';
-import store from 'redux/store';
-import { setAuthenticatedUser, clearAuthenticatedUser } from 'redux/authSlice';
-
+import { loginSuccess, logoutSuccess } from './redux/authSlice';
+import { selectAuthToken } from './redux/selectors';
+import { addContactSuccess } from './redux/contactsSlice';
 const BASE_URL = 'https://connections-api.herokuapp.com';
 
-const setAuthToken = token => {
-  if (token) {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-  } else {
-    delete axios.defaults.headers.common['Authorization'];
-  }
-};
-
-export const authenticateUser = async () => {
+export const registerUser = async (userData, dispatch) => {
   try {
-    const response = await axios.get(`${BASE_URL}/users/current`);
-    const user = response.data;
-    store.dispatch(
-      setAuthenticatedUser({ user, token: localStorage.getItem('token') })
-    );
-  } catch (error) {
-    console.error('Authentication Error:', error.message);
-    store.dispatch(clearAuthenticatedUser());
-  }
-};
-
-export const registerUser = async (email, password) => {
-  try {
-    const response = await axios.post(`${BASE_URL}/users/signup`, {
-      email,
-      password,
+    const response = await fetch(`${BASE_URL}/users/signup`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
     });
 
-    const { token } = response.data;
-    setAuthToken(token);
+    const data = await response.json();
 
-    return response.data;
+    console.log('Response data:', data);
+
+    if (data.token) {
+      dispatch(loginSuccess(data.token));
+    }
+
+    return data;
   } catch (error) {
-    console.error('Registration Error:', error.message);
+    console.error('Error registering user:', error);
+
+    if (error.response) {
+      console.error('Server response data:', error.response.data);
+      console.error('Server response status:', error.response.status);
+      console.error('Server response headers:', error.response.headers);
+    } else if (error.request) {
+      console.error('No response received from the server');
+    } else {
+      console.error('Error message:', error.message);
+    }
+
     throw error;
   }
 };
 
-export const loginUser = async (email, password) => {
+export const loginUser = async (userData, dispatch) => {
   try {
-    const response = await axios.post(`${BASE_URL}/users/login`, {
-      email,
-      password,
+    const response = await fetch(`${BASE_URL}/users/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
     });
-    const { token } = response.data;
-    setAuthToken(token);
-    localStorage.setItem('token', token);
 
-    store.dispatch(setAuthenticatedUser({ user: response.data.user, token }));
-    return response.data;
+    const data = await response.json();
+
+    console.log('Login response data:', data);
+
+    if (data.token) {
+      dispatch(loginSuccess(data.token));
+      return { success: true, message: 'Login successful' };
+    } else {
+      return { success: false, error: 'Invalid credentials' };
+    }
   } catch (error) {
-    console.error('Login Error:', error.message);
+    console.error('Error during login:', error);
     throw error;
   }
 };
 
-export const logoutUser = async () => {
+export const logoutUser = async (dispatch, getState) => {
   try {
-    setAuthToken(null);
-    localStorage.removeItem('token');
-    store.dispatch(clearAuthenticatedUser());
-    return { message: 'Logout successful' };
+    await fetch(`${BASE_URL}/users/logout`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${getState().auth.user.token}`,
+      },
+    });
+    dispatch(logoutSuccess());
+
+    console.log('User logged out successfully');
   } catch (error) {
-    console.error('Logout Error:', error.message);
+    console.error('Error logging out user:', error);
     throw error;
   }
 };
 
-export const getCurrentUser = async () => {
+export const getCurrentUserInfo = async (dispatch, getState) => {
   try {
-    const response = await axios.get(`${BASE_URL}/users/current`);
+    const authToken = selectAuthToken(getState());
 
-    return response.data;
+    const response = await fetch(`${BASE_URL}/users/current`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+
+    const data = await response.json();
+
+    dispatch(loginSuccess(data));
+
+    return data;
   } catch (error) {
-    console.error('Get Current User Error:', error.message);
+    console.error('Error fetching current user information:', error);
     throw error;
   }
 };
 
-export const getUserContacts = async () => {
+export const getContacts = async token => {
   try {
-    const response = await axios.get(`${BASE_URL}/contacts`);
+    console.log('Authorization Header:', `Bearer ${token}`);
 
-    return response.data;
+    const response = await fetch(`${BASE_URL}/contacts`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+    return data;
   } catch (error) {
-    console.error('Get User Contacts Error:', error.message);
+    console.error('Error fetching contacts:', error);
     throw error;
   }
 };
 
-export const postContact = async contact => {
+export const addContact = async (contactData, dispatch, getState) => {
   try {
-    const response = await axios.post(`${BASE_URL}/contacts`, contact);
+    const response = await fetch(`${BASE_URL}/contacts`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getState().auth.user.token}`,
+      },
+      body: JSON.stringify(contactData),
+    });
 
-    return response.data;
+    const data = await response.json();
+
+    console.log('Add Contact Response:', data);
+
+    if (response.ok) {
+      dispatch(addContactSuccess(data));
+    } else {
+      console.error('Error adding contact:', data);
+    }
+
+    return data;
   } catch (error) {
-    console.error('Post Contact Error:', error.message);
+    console.error('Error adding contact:', error);
     throw error;
   }
 };
 
 export const deleteContact = async contactId => {
   try {
-    const response = await axios.delete(`${BASE_URL}/contacts/${contactId}`);
+    const response = await fetch(`${BASE_URL}/contacts/${contactId}`, {
+      method: 'DELETE',
+    });
 
-    return response.data;
+    const data = await response.json();
+    return data;
   } catch (error) {
-    console.error('Delete Contact Error:', error.message);
+    console.error('Error deleting contact:', error);
     throw error;
   }
 };
 
-export const patchContact = async (contactId, updatedData) => {
+export const updateContact = async (contactId, updatedData) => {
   try {
-    const response = await axios.patch(
-      `${BASE_URL}/contacts/${contactId}`,
-      updatedData
-    );
+    const response = await fetch(`${BASE_URL}/contacts/${contactId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedData),
+    });
 
-    return response.data;
+    const data = await response.json();
+    return data;
   } catch (error) {
-    console.error('Patch Contact Error:', error.message);
+    console.error('Error updating contact:', error);
     throw error;
   }
 };

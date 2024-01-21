@@ -1,63 +1,44 @@
-import React, { useEffect } from 'react';
-import ContactList from './ContactList/ContactList';
-import Filter from './Filter/Filter';
-import ContactForm from './ContactForm/ContactForm';
-import './app.css';
-import { useDispatch, useSelector } from 'react-redux';
-import { setFilter } from '../redux/filterSlice';
 import {
-  addContactAsync,
-  deleteContactAsync,
-  fetchContactsAsync,
-} from '../redux/contactsSlice';
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import Homepage from './Homepage/Homepage';
+import ContactForm from './ContactForm/ContactForm';
+import ContactList from './ContactList/ContactList';
+import UserMenu from './UserMenu/UserMenu';
+import Login from './Login/Login';
+import Register from './Register/Register';
 const App = () => {
-  const dispatch = useDispatch();
-  const contacts = useSelector(state => state.contacts.contacts || []);
-  const filter = useSelector(state => state.filter || '');
-
-  useEffect(() => {
-    dispatch(fetchContactsAsync());
-  }, [dispatch]);
-
-  const contactExists = newContact =>
-    contacts.some(
-      contact => contact.name.toLowerCase() === newContact.name.toLowerCase()
-    );
-
-  const handleAddContact = async newContact => {
-    if (contactExists(newContact)) {
-      alert('Contact already exists');
-    } else {
-      await dispatch(addContactAsync(newContact));
-      await dispatch(fetchContactsAsync());
-      console.log('Updated Contacts:', contacts);
-    }
-  };
-
-  const handleDeleteContact = async deletedContact => {
-    await dispatch(deleteContactAsync(deletedContact.id));
-    await dispatch(fetchContactsAsync());
-  };
-
-  const handleFilterChange = filterValue => {
-    dispatch(setFilter(filterValue));
-  };
-
-  const filteredContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(filter.toLowerCase())
-  );
+  const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
 
   return (
-    <div className="wrapper">
-      <h1>Phonebook</h1>
-      <ContactForm addContact={handleAddContact} />
-      <h2>Contacts</h2>
-      <Filter filter={contacts} handleFilterChange={handleFilterChange} />
-      <ContactList
-        contacts={filteredContacts}
-        handleDeleteContact={handleDeleteContact}
-      />
-    </div>
+    <Router basename="/goit-react-hw-08-phonebook">
+      <div className="wrapper">
+        <Routes>
+          <Route path="/" element={<Homepage />} />
+          <Route
+            path="/contacts"
+            element={
+              isAuthenticated ? (
+                <>
+                  <h1>Phonebook</h1>
+                  <ContactForm />
+                  <UserMenu />
+                  <ContactList />
+                </>
+              ) : (
+                <Navigate to="/" replace />
+              )
+            }
+          />
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+        </Routes>
+      </div>
+    </Router>
   );
 };
 
