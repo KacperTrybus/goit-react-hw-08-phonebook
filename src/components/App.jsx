@@ -4,16 +4,15 @@ import {
   Route,
   Navigate,
 } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import Homepage from './Homepage/Homepage';
 import ContactForm from './ContactForm/ContactForm';
 import ContactList from './ContactList/ContactList';
 import UserMenu from './UserMenu/UserMenu';
 import Login from './Login/Login';
 import Register from './Register/Register';
+import { selectAuthToken } from '../redux/selectors';
 const App = () => {
-  const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
-
+  const token = selectAuthToken;
   return (
     <Router basename="/goit-react-hw-08-phonebook">
       <div className="wrapper">
@@ -22,7 +21,7 @@ const App = () => {
           <Route
             path="/contacts"
             element={
-              isAuthenticated ? (
+              token ? (
                 <>
                   <h1>Phonebook</h1>
                   <ContactForm />
@@ -30,7 +29,7 @@ const App = () => {
                   <ContactList />
                 </>
               ) : (
-                <Navigate to="/" replace />
+                <Navigate to="/" />
               )
             }
           />

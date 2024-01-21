@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  addContact,
-  setContacts
-} from '../../redux/contactsSlice';
-import { getContacts } from 'api';
+import { useDispatch } from 'react-redux';
+import { addContact } from '../../redux/contactsSlice';
+import { getContacts } from '../../redux/thunks';
 
 const ContactForm = () => {
-  const token = useSelector(state => state.auth.user.token);
   const dispatch = useDispatch();
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
@@ -27,14 +23,8 @@ const ContactForm = () => {
       number,
     };
 
-    dispatch(addContact(contact));
-
-    try {
-      const contacts = await getContacts(token);
-      dispatch(setContacts(contacts));
-    } catch (error) {
-      console.error('Error fetching contacts:', error);
-    }
+    await dispatch(addContact(contact));
+    await dispatch(getContacts());
 
     setName('');
     setNumber('');

@@ -1,6 +1,7 @@
+// Login.js
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { loginUser } from 'api';
+import { loginUser } from '../../redux/thunks';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
@@ -18,16 +19,8 @@ const Login = () => {
         password: password,
       };
 
-      const loginResult = await loginUser(userData, dispatch);
-
-      if (loginResult.success) {
-        console.log('Login successful:', loginResult.message);
-
-        navigate('/contacts');
-      } else {
-        console.error('Login failed:', loginResult.error);
-        navigate('/');
-      }
+      await dispatch(loginUser(userData));
+      navigate('/contacts');
     } catch (error) {
       console.error('Error during login:', error);
 
@@ -36,7 +29,6 @@ const Login = () => {
       }
     }
   };
-
   return (
     <form onSubmit={handleSubmit}>
       <label>

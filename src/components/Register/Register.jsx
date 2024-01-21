@@ -1,44 +1,40 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { registerUser } from 'api';
+import { registerUser } from '../../redux/thunks';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const dispatch = useDispatch();
-  const [name, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+  });
 
-  const handleSubmit = async e => {
-    e.preventDefault();
+  const handleInputChange = e => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
+  const handleRegister = async () => {
     try {
-      const userData = {
-        name,
-        email,
-        password,
-      };
-
-      const registrationResult = await registerUser(userData, dispatch);
-
-      if (registrationResult.success) {
-        console.log('Registration successful:', registrationResult.message);
-      } else {
-        console.error('Registration failed:', registrationResult.error);
-      }
+      const token = await dispatch(registerUser(formData));
+      navigate('/contacts');
+      console.log('Token after registration:', token);
     } catch (error) {
       console.error('Error during registration:', error);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleRegister}>
       <label>
         Username
         <input
           type="text"
-          name="name"
-          value={name}
-          onChange={e => setUsername(e.target.value)}
+          name="username"
+          value={formData.username}
+          onChange={handleInputChange}
         />
       </label>
 
@@ -47,8 +43,8 @@ const Register = () => {
         <input
           type="email"
           name="email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
+          value={formData.email}
+          onChange={handleInputChange}
         />
       </label>
 
@@ -57,8 +53,8 @@ const Register = () => {
         <input
           type="password"
           name="password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
+          value={formData.password}
+          onChange={handleInputChange}
         />
       </label>
 
