@@ -1,16 +1,18 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { logoutUser } from '../../redux/thunks';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { selectUser } from '../../redux/selectors';
 
 const UserMenu = () => {
-  const user = useSelector(state => state.auth.user);
+  const user = useSelector(selectUser);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const handleLogout = async () => {
     try {
       await dispatch(logoutUser());
-      Navigate('/homepage');
+      navigate('/');
     } catch (error) {
       console.error('Error during logout:', error);
     }
@@ -19,7 +21,7 @@ const UserMenu = () => {
   return (
     <div>
       {user && user.email ? (
-        <p>{user.mail}</p>
+        <p>{user.email}</p>
       ) : (
         <p>User email not available</p>
       )}

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { addContact } from '../../redux/contactsSlice';
-import { getContacts } from '../../redux/thunks';
+import { addContact, getContacts } from '../../redux/thunks';
 
 const ContactForm = () => {
   const dispatch = useDispatch();
@@ -22,8 +21,8 @@ const ContactForm = () => {
       name,
       number,
     };
-
     await dispatch(addContact(contact));
+
     await dispatch(getContacts());
 
     setName('');

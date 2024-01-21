@@ -2,6 +2,7 @@ import axios from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { loginSuccess, logout } from './authSlice';
 import { selectAuthToken } from './selectors';
+import { setContacts } from './contactsSlice';
 
 const BASE_URL = 'https://connections-api.herokuapp.com';
 
@@ -30,26 +31,29 @@ export const registerUser = createAsyncThunk(
   }
 );
 
-export const loginUser = createAsyncThunk('auth/loginUser', async userData => {
-  try {
-    const response = await instance.post('/users/login', userData);
-    const data = response.data;
-    if (data.token) {
-      return loginSuccess(data.token);
-    } else {
-      throw new Error('Invalid credentials');
+export const loginUser = createAsyncThunk(
+  'auth/loginUser',
+  async (userData, { dispatch }) => {
+    try {
+      const response = await instance.post('/users/login', userData);
+      const data = response.data;
+      if (data.token) {
+        dispatch(loginSuccess({ token: data.token, user: data.user }));
+      } else {
+        throw new Error('Invalid credentials');
+      }
+    } catch (error) {
+      throw error;
     }
-  } catch (error) {
-    throw error;
   }
-});
+);
 
 export const logoutUser = createAsyncThunk(
   'auth/logoutUser',
   async (_, { dispatch, getState }) => {
     try {
       const authToken = selectAuthToken(getState());
-      await instance.post('/users/logout', null, {
+      await instance.post('/users/logout', {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -72,11 +76,9 @@ export const getCurrentUserInfo = createAsyncThunk(
           Authorization: `Bearer ${authToken}`,
         },
       });
-
       const data = response.data;
       dispatch(loginSuccess(data));
-
-      return data;
+      console.log(data);
     } catch (error) {
       throw error;
     }
@@ -85,7 +87,7 @@ export const getCurrentUserInfo = createAsyncThunk(
 
 export const getContacts = createAsyncThunk(
   'contacts/getContacts',
-  async (_, { getState }) => {
+  async (_, { getState, dispatch }) => {
     try {
       const authToken = selectAuthToken(getState());
       const response = await instance.get('/contacts', {
@@ -93,8 +95,7 @@ export const getContacts = createAsyncThunk(
           Authorization: `Bearer ${authToken}`,
         },
       });
-
-      return response.data;
+      dispatch(setContacts(response.data));
     } catch (error) {
       throw error;
     }
@@ -105,9 +106,11 @@ export const addContact = createAsyncThunk(
   'contacts/addContact',
   async (contactData, { dispatch, getState }) => {
     try {
+      const authToken = selectAuthToken(getState());
+      console.log(authToken);
       const response = await instance.post('/contacts', contactData, {
         headers: {
-          Authorization: `Bearer ${selectAuthToken(getState())}`,
+          Authorization: `Bearer ${authToken}`,
         },
       });
 
@@ -126,11 +129,21 @@ export const addContact = createAsyncThunk(
 
 export const deleteContact = createAsyncThunk(
   'contacts/deleteContact',
-  async contactId => {
+  async (contactId, { getState }) => {
     try {
-      const response = await instance.delete(`/contacts/${contactId}`);
+      const authToken = selectAuthToken(getState());
+      const response = await instance.delete(`/contacts/${contactId}`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      console.log(response.data);
       return response.data;
     } catch (error) {
+      console.error('Error deleting contact:', error);
+      console.log('Response status:', error.response?.status);
+      console.log('Response data:', error.response?.data);
+
       throw error;
     }
   }

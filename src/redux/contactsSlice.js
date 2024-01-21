@@ -8,8 +8,9 @@ const contactsSlice = createSlice({
       state.contacts.push(action.payload);
     },
     deleteContact(state, action) {
+      const contactIdToDelete = action.payload.id;
       state.contacts = state.contacts.filter(
-        contact => contact.id !== action.payload
+        contact => contact.id !== contactIdToDelete
       );
     },
     setContacts(state, action) {

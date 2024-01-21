@@ -10,9 +10,14 @@ import ContactList from './ContactList/ContactList';
 import UserMenu from './UserMenu/UserMenu';
 import Login from './Login/Login';
 import Register from './Register/Register';
-import { selectAuthToken } from '../redux/selectors';
+import { selectAuthToken, selectFilter } from '../redux/selectors';
+import Filter from './Filter/Filter';
+import { useSelector } from 'react-redux';
+
 const App = () => {
-  const token = selectAuthToken;
+  const token = useSelector(selectAuthToken);
+  const filter = useSelector(selectFilter);
+
   return (
     <Router basename="/goit-react-hw-08-phonebook">
       <div className="wrapper">
@@ -26,6 +31,7 @@ const App = () => {
                   <h1>Phonebook</h1>
                   <ContactForm />
                   <UserMenu />
+                  <Filter filter={filter} />
                   <ContactList />
                 </>
               ) : (

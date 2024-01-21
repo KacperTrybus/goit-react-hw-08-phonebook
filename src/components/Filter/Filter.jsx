@@ -1,15 +1,14 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { setFilter } from '../../redux/filterSlice';
+import { selectFilter } from '../../redux/selectors';
 
-const Filter = ({ filter }) => {
+const Filter = () => {
   const dispatch = useDispatch();
-  const [localFilter, setLocalFilter] = useState(filter);
+  const filter = useSelector(selectFilter);
 
   const handleFilterChange = e => {
     const filterValue = e.target.value;
-    setLocalFilter(filterValue);
     dispatch(setFilter(filterValue));
   };
 
@@ -17,19 +16,15 @@ const Filter = ({ filter }) => {
     <div>
       <label htmlFor="filterInput" className="filter">
         Find contacts by name:
+        <input
+          id="filterInput"
+          type="text"
+          value={filter}
+          onChange={handleFilterChange}
+        />
       </label>
-      <input
-        id="filterInput"
-        type="text"
-        value={localFilter}
-        onChange={handleFilterChange}
-      />
     </div>
   );
-};
-
-Filter.propTypes = {
-  filter: PropTypes.array.isRequired,
 };
 
 export default Filter;
