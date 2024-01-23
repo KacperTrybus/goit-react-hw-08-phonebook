@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { registerUser } from '../../redux/thunks';
 import { useNavigate } from 'react-router-dom';
+// import { registerSuccess } from '../../redux/authSlice';
 
 const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    username: '',
+    name: '',
     email: '',
     password: '',
   });
@@ -16,11 +17,13 @@ const Register = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleRegister = async () => {
+  const handleRegister = async e => {
+    e.preventDefault();
     try {
       const token = await dispatch(registerUser(formData));
-      navigate('/contacts');
+      navigate('/login');
       console.log('Token after registration:', token);
+      // dispatch(registerSuccess(token));
     } catch (error) {
       console.error('Error during registration:', error);
     }
@@ -32,8 +35,8 @@ const Register = () => {
         Username
         <input
           type="text"
-          name="username"
-          value={formData.username}
+          name="name"
+          value={formData.name}
           onChange={handleInputChange}
         />
       </label>

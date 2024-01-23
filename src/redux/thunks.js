@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { loginSuccess, logout } from './authSlice';
+import { loginSuccess, logout, registerSuccess } from './authSlice';
 import { selectAuthToken } from './selectors';
 import { setContacts } from './contactsSlice';
 
@@ -15,12 +15,14 @@ const instance = axios.create({
 
 export const registerUser = createAsyncThunk(
   'auth/registerUser',
-  async userData => {
+  async (userData, { dispatch }) => {
     try {
       const response = await instance.post('/users/signup', userData);
       const data = response.data;
 
       if (data.token) {
+        console.log(data.token);
+        dispatch(registerSuccess({ token: data.token, user: data.user }));
         return data.token;
       } else {
         throw new Error('Invalid response from server');
