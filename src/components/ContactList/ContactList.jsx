@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { selectContacts } from '../../redux/selectors';
 import { useSelector, useDispatch } from 'react-redux';
 import { deleteContact, getContacts } from '../../redux/thunks';
@@ -8,6 +8,10 @@ const ContactList = () => {
   const dispatch = useDispatch();
   const contacts = useSelector(state => selectContacts(state));
   const filter = useSelector(state => state.filter);
+
+  useEffect(() => {
+    dispatch(getContacts());
+  }, [dispatch]);
 
   const filteredContacts = contacts.filter(contact =>
     contact.name.toLowerCase().includes(filter.toLowerCase())
