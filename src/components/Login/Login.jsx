@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { loginUser } from '../../redux/thunks';
 import { useNavigate } from 'react-router-dom';
 import './login.css';
+import { getContacts } from '../../redux/thunks';
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -22,6 +23,7 @@ const Login = () => {
 
       await dispatch(loginUser(userData));
       navigate('/contacts');
+      await dispatch(getContacts());
     } catch (error) {
       console.error('Error during login:', error);
 
