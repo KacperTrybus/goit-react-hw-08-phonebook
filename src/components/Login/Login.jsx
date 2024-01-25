@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { loginUser } from '../../redux/thunks';
 import { useNavigate } from 'react-router-dom';
+import './login.css';
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -30,28 +31,38 @@ const Login = () => {
     }
   };
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        Email
-        <input
-          type="email"
-          name="email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-        />
-      </label>
+    <form className="login-form" onSubmit={handleSubmit}>
+      <ul className="login-form-list">
+        <li>
+          <label className="login-form-label">
+            Email
+            <input
+              type="email"
+              name="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              className="login-input"
+            />
+          </label>
+        </li>
 
-      <label>
-        Password
-        <input
-          type="password"
-          name="password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-        />
-      </label>
+        <li>
+          <label className="login-form-label">
+            Password
+            <input
+              type="password"
+              name="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              className="login-input"
+            />
+          </label>
+        </li>
 
-      <button type="submit">Login</button>
+        <button className="login-btn" type="submit">
+          Login
+        </button>
+      </ul>
     </form>
   );
 };

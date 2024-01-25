@@ -13,6 +13,7 @@ import Register from './Register/Register';
 import { selectAuthToken, selectFilter } from '../redux/selectors';
 import Filter from './Filter/Filter';
 import { useSelector } from 'react-redux';
+import './app.css';
 
 const App = () => {
   const token = useSelector(selectAuthToken);
@@ -28,9 +29,9 @@ const App = () => {
             element={
               token ? (
                 <>
-                  <h1>Phonebook</h1>
-                  <ContactForm />
+                  <h1>Your phonebook</h1>
                   <UserMenu />
+                  <ContactForm />
                   <Filter filter={filter} />
                   <ContactList />
                 </>

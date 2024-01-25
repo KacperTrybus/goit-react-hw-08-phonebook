@@ -2,6 +2,7 @@ import React from 'react';
 import { selectContacts } from '../../redux/selectors';
 import { useSelector, useDispatch } from 'react-redux';
 import { deleteContact, getContacts } from '../../redux/thunks';
+import './contactlist.css';
 
 const ContactList = () => {
   const dispatch = useDispatch();
@@ -19,9 +20,13 @@ const ContactList = () => {
 
   const renderContacts = () =>
     filteredContacts.map(contact => (
-      <li key={contact.id} className="contact">
+      <li key={contact.id} className="contactlist-contact">
         {contact.name}: {contact.number}
-        <button type="button" onClick={() => handleDeleteContact(contact.id)}>
+        <button
+          type="button"
+          className="contactlist-btn"
+          onClick={() => handleDeleteContact(contact.id)}
+        >
           Delete
         </button>
       </li>

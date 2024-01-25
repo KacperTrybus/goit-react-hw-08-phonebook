@@ -1,0 +1,17 @@
+.filter-box {
+  margin: 20px 0px;
+}
+
+.filter-label {
+  font-size: 24px;
+}
+
+.filter-input {
+  background-color: #76a5af;
+  color: #134f5c;
+  outline: none;
+  border: none;
+  border-radius: 30px;
+  padding: 6px;
+  margin-left: 15px;
+}

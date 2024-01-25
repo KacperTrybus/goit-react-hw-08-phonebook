@@ -1,0 +1,26 @@
+.usermenu-mail {
+  font-size: 24px;
+}
+
+.usermenu-btn {
+  background-color: #45818e;
+  color: #0d291f;
+  outline: none;
+  border: none;
+  border-radius: 30px;
+  padding: 4px;
+  font-size: 18px;
+  line-height: 30px;
+  margin: 0px 0px 20px 20px;
+  width: 150px;
+  cursor: pointer;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 250ms;
+}
+
+.usermenu-btn:hover {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 250ms;
+  background-color: #0c343d;
+  color: #9fc5e8;
+}

@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { logoutUser } from '../../redux/thunks';
 import { useNavigate } from 'react-router-dom';
 import { selectUser } from '../../redux/selectors';
+import './usermenu.css';
 
 const UserMenu = () => {
   const user = useSelector(selectUser);
@@ -21,11 +22,13 @@ const UserMenu = () => {
   return (
     <div>
       {user && user.email ? (
-        <p>{user.email}</p>
+        <p className="usermenu-mail">Welcome {user.email}!</p>
       ) : (
         <p>User email not available</p>
       )}
-      <button onClick={handleLogout}>Logout</button>
+      <button className="usermenu-btn" onClick={handleLogout}>
+        Logout
+      </button>
     </div>
   );
 };

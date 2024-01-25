@@ -1,0 +1,30 @@
+.contactlist-contact {
+  font-size: 32px;
+  margin-bottom: 10px;
+  text-transform: capitalize;
+  align-items: center;
+  display: flex;
+}
+
+.contactlist-btn {
+  background-color: #45818e;
+  color: #0d291f;
+  outline: none;
+  border: none;
+  border-radius: 30px;
+  padding: 5px;
+  font-size: 18px;
+  margin-left: 20px;
+  width: 120px;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 250ms;
+
+  cursor: pointer;
+}
+
+.contactlist-btn:hover {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 250ms;
+  background-color: #0c343d;
+  color: #9fc5e8;
+}
