@@ -3,7 +3,7 @@
 }
 
 .usermenu-btn {
-  background-color: #45818e;
+  background-color: #eadbc8;
   color: #0d291f;
   outline: none;
   border: none;
@@ -21,6 +21,5 @@
 .usermenu-btn:hover {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 250ms;
-  background-color: #0c343d;
-  color: #9fc5e8;
+  background-color: #803d3b;
 }
