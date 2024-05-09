@@ -37,7 +37,7 @@ const Login = () => {
       <ul className="login-form-list">
         <li>
           <label className="login-form-label">
-            Email
+            Email:
             <input
               type="email"
               name="email"
@@ -50,7 +50,7 @@ const Login = () => {
 
         <li>
           <label className="login-form-label">
-            Password
+            Password:
             <input
               type="password"
               name="password"

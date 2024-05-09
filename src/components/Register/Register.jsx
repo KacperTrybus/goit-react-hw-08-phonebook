@@ -41,7 +41,7 @@ const Register = () => {
       <ul className="register-form-list">
         <li>
           <label className="register-form-label">
-            Username
+            Username:
             <input
               type="text"
               name="name"
@@ -54,7 +54,7 @@ const Register = () => {
 
         <li>
           <label className="register-form-label">
-            Email
+            Email:
             <input
               type="email"
               name="email"
@@ -67,7 +67,7 @@ const Register = () => {
 
         <li>
           <label className="register-form-label">
-            Password
+            Password:
             <input
               type="password"
               name="password"
