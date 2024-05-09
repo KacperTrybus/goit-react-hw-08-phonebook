@@ -14,3 +14,10 @@
   padding: 6px;
   margin-left: 15px;
 }
+
+.filter-input:focus {
+  background-color: #803d3b;
+  color: #eadbc8;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 250ms;
+}
